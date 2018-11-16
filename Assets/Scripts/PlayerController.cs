@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 groundCheckOffset;
     public float groundCheckLength;
+
+    public Text boostText; //TEMPORARY
 
     Rigidbody2D rb;
 
@@ -46,6 +49,8 @@ public class PlayerController : MonoBehaviour
 
         if(boost > 100) { boost = 100; }
         if (boost < 0) { boost = 0; }
+
+        boostText.text = boost.ToString();
     }
 
     void FixedUpdate()
