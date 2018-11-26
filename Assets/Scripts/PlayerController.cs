@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IKillable
 {
     public float groundSpeed;
     public float airSpeed;
     public float jumpForce;
+
+    private Vector3 startPos;
 
     private bool airSlideReady = true;
     private bool inAirSlide = false;
@@ -23,11 +25,15 @@ public class PlayerController : MonoBehaviour
 
     public Text boostText; //TEMPORARY
 
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
+
+    private ParticleSystem.MainModule fireParticle;
 
     void Start()
     {
+        startPos = transform.position;
         rb = GetComponent<Rigidbody2D>();
+        fireParticle = transform.Find("FireParticle").GetComponent<ParticleSystem>().main;
     }
 
     void Update()
@@ -51,6 +57,9 @@ public class PlayerController : MonoBehaviour
         if (boost < 0) { boost = 0; }
 
         boostText.text = boost.ToString();
+
+        float fireAlpha = boost / 100;
+        fireParticle.startColor = new Color(fireParticle.startColor.color.r, fireParticle.startColor.color.g, fireParticle.startColor.color.b, fireAlpha);
     }
 
     void FixedUpdate()
@@ -87,8 +96,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    bool isGrounded()
+    public bool isGrounded()
     {
         return Physics2D.Raycast((new Vector2(transform.position.x, transform.position.y) + groundCheckOffset), new Vector2(0, -1), groundCheckLength);
+    }
+
+    public void Death()
+    {
+        transform.position = startPos;
+        rb.velocity = Vector2.zero;
+        boost = 0;
     }
 }
